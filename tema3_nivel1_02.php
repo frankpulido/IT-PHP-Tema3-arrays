@@ -23,8 +23,10 @@ foreach ($x as $index => $valor) {
     $y[] = $valor;
 }
 
+// sort($x); La instrucción SORT() nos pudo haber evitado el FOR EACH empleado en el ejercicio.
 echo "Ahora el Array consta de " . count($y) . " elementos, pero está bien indexado almacenado en una nueva variable :\n\n";
 print_r($y);
 echo "\n\n";
+echo "En el Nivel2-Ejercicio1 descubriremos que la función sort() nos reindexa el Array sin necesidad de recurrir al FOR EACH usado en este ejercicio";
 
 ?>

@@ -18,16 +18,16 @@ Equivale a hacer esto :
 
 $opcion = -1;
 $alumnos = 0; // número de alumnos de la clase, lo definirá el usuario
-$keys_alumnos = []; // Aquí tomaremos los nombres
+$keys_alumnos = []; // Aquí tomaremos los nombres que serán claves del array asociativo que almacenará todas las notas de los alumnos
 $keys_notas = ["matemáticas", "física", 'química', 'historia', 'biología']; // Aquí almacenaremos las notas, son 5 por alumno. Lo creo con claves para simular 5 asignaturas.
-// The "extra mile" : calculate average grade by $notas keys : matemáticas, química, historia...
-$notas_clase = []; // Usaré array_combine($keys, $notas) y así obtendré el array asociativo creado enteramente por el usuario
+// The "extra mile" : calculate class average grade by $notas keys : matemáticas, química, historia...
+$notas_clase = []; // Usaré array_combine($keys_alumnos, $notas) y así obtendré el array asociativo creado enteramente por el usuario
 
 echo "\n";
 do {
     $alumnos = (int) readline("Indique el número de alumnos de la clase : ");
-    if ($alumnos < 2) {echo "Este ejercicio sólo puede hacerse con 2 o más alumnos";}
-} while ($alumnos < 2);
+    if ($alumnos <= 2) {echo "Este ejercicio sólo puede hacerse con 2 o más alumnos";}
+} while ($alumnos <= 2);
 echo "\n";
 for ($i = 1; $i <= $alumnos; $i++) {
     $keys_alumnos [] = readline("Indique el nombre del alumno(a) $i : "); 
@@ -38,7 +38,7 @@ print_r($keys_alumnos);
 
 // Ahora tomaremos las notas
 $notas_alumno = [];
-$notas_alumno_asociativo = [];
+$notas_alumno_asociativo = []; // Combinará $keys_alumnos y $notas_alumno para cada alumno.
 for ($i = 0; $i < $alumnos; $i++) {
     unset($notas_alumno); // Debemos inicializar este array auxiliar en cada ciclo del bucle. La función unset vacía el array
     $notas_alumno_asociativo = array_fill_keys($keys_alumnos, null); // Debemos inicializar este array auxiliar en cada ciclo del bucle. Usamos esta función para no eliminar las "keys"
@@ -46,20 +46,20 @@ for ($i = 0; $i < $alumnos; $i++) {
     echo "Por favor, indíquenos las notas de $keys_alumnos[$i] :\n";
     for($j = 0; $j < count($keys_notas); $j++) {
         echo "$keys_alumnos[$i] - Nota obtenida en $keys_notas[$j] : ";
-        $notas_alumno[] = (int) readline();
+        $notas_alumno[] = (int) readline(); // Este array almacena todas las notas del alumno
     }
-    $notas_alumno_asociativo = array_combine($keys_notas, $notas_alumno);
-    $notas_clase [] = $notas_alumno_asociativo;
+    $notas_alumno_asociativo = array_combine($keys_notas, $notas_alumno); // Este array convierte el anterior en un array asociativo (claves : $keys_notas)
+    $notas_clase [] = $notas_alumno_asociativo; // Las notas del alumno i se almacenan en el Array que contiene las notas d etoda la clase
 }
 echo "\n";
 echo "Las notas de los $alumnos alumnos de la clase :\n";
-$notas_clase_asociativo = array_combine($keys_alumnos, $notas_clase);
+$notas_clase_asociativo = array_combine($keys_alumnos, $notas_clase); // Convertimos el array de notas de toda la clase en un Array asociativo (claves : $keys_alumnos)
 print_r($notas_clase_asociativo);
 echo "\n";
 
 /*
-Ahora tenemos finalmente los datos de la clase : Hemos construido un array asociativo cuyos elementos son arrays aociativos.
-A continuación pasaremos a las funciones que nos piden
+ARRAY 2D. Ahora tenemos finalmente los datos de la clase : Hemos construido un array asociativo cuyos elementos son también arrays aociativos.
+A continuación pasaremos a las funciones que nos piden desarrollar.
 */
 
 do {
@@ -76,19 +76,23 @@ do {
         case 1 :
             echo "\n";
             echo "Media de notas GENERAL de la clase.\n";
-            $media_alumnos_asociativo = average_students($notas_clase_asociativo, $keys_notas, $keys_alumnos);
-            $media_clase = (float) $media_alumnos_asociativo / $alumnos;
-            echo "La media general de notas de la clase (tomando en cuenta TODAS las asignaturas es : $media_clase";
+            $media_clase = (float) average_class($notas_clase_asociativo, $keys_notas, $keys_alumnos);
+            echo "La media general de notas de la clase (tomando en cuenta TODAS las asignaturas) es : $media_clase";
+            echo "\n";
             break;
         case 2 :
             echo "\n";
-            echo "Media de notas de la clase por asignatura.\n";
+            echo "Media de notas de la clase por asignatura.\n"; // Extra-mile
+            //$media_asignaturas_asociativo = average_courses($notas_clase_asociativo, $keys_notas, $keys_alumnos);
+            print_r($media_asignaturas_asociativo);
+            echo "\n";
             break;
         case 3 :
             echo "\n";
             echo "Media de notas de los alumnos.\n";
             $media_alumnos_asociativo = average_students($notas_clase_asociativo, $keys_notas, $keys_alumnos);
             print_r($media_alumnos_asociativo);
+            echo "\n";
             break;
         default :
             echo "Debe elegir una opción válida";
@@ -97,12 +101,38 @@ do {
 } while ($opcion != 0);
 
 function average_students($notas_clase_asociativo, $keys_notas, $keys_alumnos) {
-    global $media_alumnos_asociativo;
+    $average = 0;
+    $average_students = [];
+    $media_alumnos_asociativo = [];
     foreach ($notas_clase_asociativo as $notas=>$values) {
         $average = array_sum($values)/count($keys_notas);
         $avg_students [] = $average;
     }
     $media_alumnos_asociativo = array_combine($keys_alumnos, $avg_students);
+    return $media_alumnos_asociativo;
 }
 
-?> 
+function average_class($notas_clase_asociativo, $keys_notas, $keys_alumnos) {
+    $media_clase = 0;
+    $media_clase = array_sum(average_students($notas_clase_asociativo, $keys_notas, $keys_alumnos)) / count($keys_alumnos);
+    return $media_clase;
+}
+
+/*
+function average_courses($notas_clase_asociativo, $keys_notas, $keys_alumnos) {
+    $media_cursos = [];
+    $media_cursos_asociativo = [];
+    $suma_curso = 0;
+    foreach ($notas_clase_asociativo as $notas=>$values) {
+        $suma_curso = 0;
+        foreach($notas as $values) {
+            $suma_curso = $suma_curso + $values;
+        }
+        $media_cursos[] = (float) $suma_curso/count($keys_alumnos);
+    }
+    $media_cursos_asociativo = array_combine($keys_notas, $media_cursos);
+    return $media_cursos_asociativo;
+}
+    */
+
+?>

@@ -24,7 +24,7 @@ Ojo con el scope LOCAL - GLOBAL - STATIC : https://www.w3schools.com/php/php_var
 !!! IMPORTANTE !!! : $GLOBALS[index] - Explicado en le LINK anterior.
 */
 
-function palabras($array = [], $letra) { // Las variables $array y $letra usadas en la función son distintas a las usadas fuera de ella.
+function palabras($array, $letra) { // Las variables $array y $letra usadas en la función son distintas a las usadas fuera de ella.
     global $testigo, $todas_ok;
     $testigo = 0;
     $todas_ok = false;

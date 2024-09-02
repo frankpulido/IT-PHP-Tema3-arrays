@@ -27,7 +27,7 @@ echo "\n";
 
 /*
 La función array_reduce(array, myfunction, initial) es una manera sencilla de presentar un resultado por pantalla,
-su return ess de tipo String.
+su return es de tipo String.
 Nosotros almacenaremos el resultado en una variable de enteros $primos.
 Usaremos array_reduce() para presentar el resultado.
 */
@@ -35,23 +35,28 @@ Usaremos array_reduce() para presentar el resultado.
 function primo($a) {
     $testigo = 2;
     $i = 2;
-    do {
-        if (fmod($a,$i) != 0){$testigo++;}
-        $i++;
-    } while ($i <= $a && $testigo == $i);
-    return ($testigo == $a);
+    if ($a == 1) {
+        return true;
+    }
+    else {
+        do {
+            if (fmod($a,$i) != 0){$testigo++;}
+            $i++;
+        } while ($i <= $a && $testigo == $i);
+        return ($testigo == $a);    
+    }
 }
 
-function return_reduce($a,$b){
-    $string = "Son números primos : ";
-    return $string . $a . " " . $b;
+function return_reduce($cummulative,$element){
+    $cummulative = ($cummulative)? " - " . $element : $element;
+    return $cummulative;
 }
 
 $primos = (array_filter($enteros, "primo")); // Los paréntesis exteriores nos permiten almacenar el resultado filtrado en una variable de tipo array.
 echo "\n";
-echo "Hemos filtrado los números primos y les hemos almacenado como elmentos de un nuevo array :\n";
+echo "Hemos filtrado los números primos y les hemos almacenado como elementos de un nuevo array :\n";
 print_r($primos);
 echo "\n";
-echo array_reduce($primos, "return_reduce");
+echo "Son números primos : " . array_reduce($primos, fn($cummulative,$element)=>(is_null($cummulative))? "$element" : "$cummulative - $element");
 
 ?>

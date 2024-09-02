@@ -107,11 +107,11 @@ function average_students($notas_clase_asociativo, $keys_notas, $keys_alumnos) {
     $average = 0;
     $average_students = [];
     $media_alumnos_asociativo = [];
-    foreach ($notas_clase_asociativo as $notas=>$values) {
-        $average = array_sum($values)/count($keys_notas);
-        $avg_students [] = $average;
+    foreach ($notas_clase_asociativo as $alumno=>$notas) {
+        $average = array_sum($notas)/count($keys_notas);
+        $average_students [] = $average;
     }
-    $media_alumnos_asociativo = array_combine($keys_alumnos, $avg_students);
+    $media_alumnos_asociativo = array_combine($keys_alumnos, $average_students);
     return $media_alumnos_asociativo;
 }
 
